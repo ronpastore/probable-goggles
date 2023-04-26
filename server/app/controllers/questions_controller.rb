@@ -17,7 +17,12 @@ class QuestionsController < ApplicationController
 
     
     content = most_similar_page
-    puts content
+    prompt = get_prompt(content[:text])
+    
+    answer = get_answer(prompt)
+    
+    puts answer
+
     # if @question.save
     #   render json: @question, status: :created
     # else
@@ -31,19 +36,40 @@ class QuestionsController < ApplicationController
   
   private
 
-  def get_prompt
+  def get_answer(prompt)
+    client = OpenAI::Client.new(access_token: ENV['OPENAI_ACCESS_KEY'])
+    response = client.completions(
+      parameters: {
+        model: "text-davinci-003",
+        prompt: prompt,
+        # temperature: 0.2,
+        max_tokens: 500,
+      }
+    )
+
+    response['choices'][0]['text'].lstrip
+  end
+
+  def get_prompt(page_text)
     prompt = 
-      "You are an AI assistant. You are tasked with answer questions about a book that a users answer.
+      "You are an AI assistant speaking from the perspective of an author. You are tasked with answering questions about your book, 'Fix Practice' in a simple and helpful way.
 
-      You will be provided company information from Sterline Parts under the [Article] section. The customer question
-      will be provided unders the [Question] section. You will answer the customers questions based on the article.
-      If the users question is not answered by the article you will respond with 'I'm sorry I don't know.'
+      The book is about a method for practicing music, and aims to provide a simple method for continued growth, originality and memory, using 3 simple rules. 
+      An exerpt from the book will supplied under the [Page] section.  Use that as much as you can to answer the question, which will be supplied under the 
+      [Question] section. 
 
-      [Article]
-      #{original_text}
+      A brief outline of rules of the practice method will be under the [Rules] section.
+
+      [Rules]
+      A block is a set of any 5 musical exercises you want. The goal of the method is to create 5 blocks. 
+      A block becomes locked when it's exercises have been played 5 times the total number of blocks, once a block is locked you can't practice it's exercises until a new block is created.
+      Once all blocks are locked, you must create a new block. 
+
+      [Page]
+      #{page_text}
 
       [Question]
-      #{question}"
+      #{@question.question}"
   end
 
   def most_similar_page
