@@ -6,18 +6,18 @@ Leaving background here obscure for the sake of the assignment. Some notes below
 
 See live example at [probable-goggles.vercel.app](https://probable-goggles.vercel.app/)
 
-## Set up local (tested with Ruby 3.2.2 & Rails 7)
-- Set ENV, OPENAI_ACCESS_KEY
-- install postgres
-- bundle install
+## Set up local (tested with Ruby 3.2.2, Rails 7, PostgreSQL 14.7)
+- Set server ENV: OPENAI_ACCESS_KEY, 
+- Client env, ```cp client/.env_sample client/.env```
+- ```bundle install```
 - ```rake db:setup```
-- start server ```bin/rails s```
+- Start server ```bin/rails s```
 - ```cd client && yarn install```
-- start client ```yarn start``` (note: select Y to run out of a different port then 3000)
+- Start client ```yarn start``` Note: select Y to run out of a different port then 3000 (rails default)
 
 ## Deployment
-- create a heroku app ```heroku apps:create --stack=heroku-22```, note app name
-- set heroku remote repo ```heroku git:remote -a APP_NAME```
+- Create a heroku app ```heroku apps:create --stack=heroku-22```, note app name
+- Set heroku remote repo ```heroku git:remote -a APP_NAME```
 - ```git push heroku main```
 - ```heroku run rake db:setup```
 - Client can use defaults on Vercel, connect github, deploy 
@@ -25,19 +25,18 @@ See live example at [probable-goggles.vercel.app](https://probable-goggles.verce
 ## Regenerate embeddings
 - ```rake generate_embeddings```
 
-
 # Dev notes
 
-## Arch decisions
-- Uses webpack and a separate React client, hosted out of the same repository. I did this mostly to reduce time and risk of deployment issues, as I'm not up to speed w/ Rails 7, import maps, etc.  
+## Arch considerations
+- Minimized effort to get a working version.
+- Uses webpack and a separate React client, hosted out of the same repository and deployed to Vercel(front) and Heroku(back). Favored more popoular setups to reduce time and risk of unknowns.  I'm also not up to speed w/ Rails 7 import maps, and there doesn't seem like an idiomatic way to work with JSX yet. 
 - React+Typescript app with create-react-app
 - SimpleCSS 
 
 ## Lessons learned
-- Should have set up prod env and deployment earlier in the process to avoid building against cloud provider best-practices, eg. nesting rails apps below the repository root
-- I started w/ SQLite, probably should have used Postgres from the beginning for an easier move to Heroku. 
+- It would have been easier, albeit less fun, to set up upper-env/deployments earlier in the process, I lost some time backing out of decisions around app structure, db, etc..
+- Using embeddings to compose prompts is incredible, makes me want write a lot more. 
 
 ## Caveats, cleanups, etc..
-- I'd typically add tests or write them as i code but had to balance time spent.  
+- I'd typically add tests or write them as i code but had to balance time spent. 
 - The Rake task to generate embeddings loads everything into memory, it should instead write CSV rows as it parses PDF pages, it might fail on a larger book.
-- In the client the API URLS are hard-coded and use window.location to determine if it's local dev or not, this should come from ENV and a build system.
