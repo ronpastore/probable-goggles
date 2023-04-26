@@ -12,8 +12,17 @@ class QuestionsController < ApplicationController
 
   def create
     @question = Question.new(question_params)
+    @question.question.downcase!
+    @question.question.strip!
  
     # check cached Qs here
+    previous_question = Question.find_by(question: @question.question)
+    if previous_question
+      previous_question.ask_count += 1
+      previous_question.save!
+      render json: previous_question
+      return
+    end
 
     page = most_similar_page
     prompt = get_prompt(page[:text])
@@ -49,7 +58,7 @@ class QuestionsController < ApplicationController
 
   def get_prompt(page_text)
     prompt = 
-      "You are an AI assistant speaking from the perspective of an author. You are tasked with answering questions about your book, 'Fix Practice' in a simple and helpful way.
+      "You are an AI assistant speaking from the perspective of an author. You are tasked with answering questions about your book, 'Fix Practice', in a simple and helpful way.
 
       The book is about a method for practicing music, and aims to provide a simple method for continued growth, originality and memory, using 3 simple rules. 
       An exerpt from the book will supplied under the [Page] section.  Use that as much as you can to answer the question, which will be supplied under the 
@@ -102,7 +111,6 @@ class QuestionsController < ApplicationController
     puts "got it..."
     return response['data'][0]['embedding']
   end
-  
   
   def get_embeddings
     embeddings = []
