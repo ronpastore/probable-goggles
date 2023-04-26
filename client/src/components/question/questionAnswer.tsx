@@ -8,7 +8,16 @@ interface Response {
   answer: string;
 }
 
-const API_URL = 'http://localhost:3000/questions';
+
+/*
+  TMP, these values should come from build system runtime via ENV.
+*/
+let API_URL: string 
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+  API_URL = "http://localhost:3000/questions"
+} else {
+  API_URL = "https://nameless-eyrie-29012.herokuapp.com/questions"
+}
 
 const QuestionAnswer: React.FC<Props> = ({ question }) => {
   
