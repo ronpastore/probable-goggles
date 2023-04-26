@@ -20,9 +20,11 @@ See live example at [probable-goggles.vercel.app](https://probable-goggles.verce
 - Set heroku remote repo ```heroku git:remote -a APP_NAME```
 - ```git push heroku main```
 - ```heroku run rake db:setup```
+- Set ENV vars: Heroku (OPENAI_ACCESS_KEY), Vercel (REACT_APP_API_HOST)
 - Client can use defaults on Vercel, connect github, deploy 
 
-## Regenerate embeddings
+## Generating embeddings
+NOTE: Sample book is small enough to fit in git, CSV and PDF are already there, only do this if you want to change contents
 - ```rake generate_embeddings```
 
 # Dev notes
@@ -38,5 +40,6 @@ See live example at [probable-goggles.vercel.app](https://probable-goggles.verce
 - Using embeddings to compose prompts is incredible, makes me want write a lot more. 
 
 ## Caveats, cleanups, etc..
-- I'd typically add tests or write them as i code but had to balance time spent. 
+- I'd typically add tests or write them as i code but had to balance time spent, same for other productionizing, logs, etc.. 
 - The Rake task to generate embeddings loads everything into memory, it should instead write CSV rows as it parses PDF pages, it might fail on a larger book.
+- Mobile layout could use some work to keep things working with fold. 
