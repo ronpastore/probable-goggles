@@ -38,7 +38,6 @@ const QuestionAnswer: React.FC<Props> = ({ question }) => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="question">Question:</label>
         <input 
           onChange={handleInputChange} 
           type="text" 
@@ -49,8 +48,7 @@ const QuestionAnswer: React.FC<Props> = ({ question }) => {
 
       {answer && (
         <div>
-          <h2>Answer:</h2>
-          <p>{answer}</p>
+          <p className="notice">{answer}</p>
         </div>
       )}
     </div>
