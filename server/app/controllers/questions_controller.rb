@@ -1,39 +1,36 @@
+require 'cosine_similarity'
+
 class QuestionsController < ApplicationController
 
-  require 'cosine_similarity'
-
+  
   skip_before_action :verify_authenticity_token
 
   def index
     @questions = Question.all
     render json: @questions
-    puts(get_embeddings[0][:embedding])
-    # render json: get_embeddings
   end
 
   def create
-    request_data = JSON.parse(request.body.read)
-    @question = Question.new(question_params.merge(request_data))
+    @question = Question.new(question_params)
+ 
+    # check cached Qs here
 
-    
-    content = most_similar_page
-    prompt = get_prompt(content[:text])
-    
+    page = most_similar_page
+    prompt = get_prompt(page[:text])
     answer = get_answer(prompt)
     
-    puts answer
-
-    # if @question.save
-    #   render json: @question, status: :created
-    # else
-    #   render json: @question.errors, status: :unprocessable_entity
-    # end
-
-    render json: @question
+    @question.answer = answer
+    @question.context = prompt
+    @question.ask_count = 1 
+    
+    if @question.save
+      render json: @question, status: :created
+    else
+      render json: @question.errors, status: :unprocessable_entity
+    end
   end
 
 
-  
   private
 
   def get_answer(prompt)
