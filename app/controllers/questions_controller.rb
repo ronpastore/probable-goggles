@@ -106,7 +106,7 @@ class QuestionsController < ApplicationController
   
   def get_embeddings
     embeddings = []
-    CSV.foreach("../content/embeddings.csv", headers: true) do |row|
+    CSV.foreach("./content/embeddings.csv", headers: true) do |row|
         embeddings << {
             embedding: JSON.parse(row['embedding']), 
             text: row['text'], 

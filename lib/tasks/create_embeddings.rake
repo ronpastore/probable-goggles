@@ -7,7 +7,7 @@ task :generate_embeddings do
     embeddings = []
 
     # Load PDF
-    reader = PDF::Reader.new('../content/fix_practice.pdf')
+    reader = PDF::Reader.new('./content/fix_practice.pdf')
     reader.pages.each_with_index do |page, idx|
 
         page_num = idx + 1
@@ -30,7 +30,7 @@ task :generate_embeddings do
         embeddings << {page: page_num, embedding: embedding, text: text}
     end
 
-    CSV.open("../content/embeddings.csv", "w") do |csv|
+    CSV.open("./content/embeddings.csv", "w") do |csv|
         csv << [:page, :embedding, :text]
         embeddings.each do |embedding|
             csv << [embedding[:page], embedding[:embedding], embedding[:text]]
