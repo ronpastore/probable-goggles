@@ -2,7 +2,7 @@ require 'openai_concern'
 
 class QuestionsController < ApplicationController
 
-  include OpenAiConcern
+  include OpenaiConcern
   
   skip_before_action :verify_authenticity_token
 

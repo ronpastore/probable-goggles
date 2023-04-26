@@ -1,7 +1,7 @@
 require 'cosine_similarity'
 
 
-module OpenAiConcern
+module OpenaiConcern
     extend ActiveSupport::Concern
     
     def get_answer(prompt)
