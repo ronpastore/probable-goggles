@@ -1,5 +1,18 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 
+/*
+  TODO, these values should come from build system runtime via ENV.
+*/
+let QUESTIONS_ENDPOINT: string 
+if (window.location.hostname === "localhost") {
+  QUESTIONS_ENDPOINT = "http://localhost:3000/questions"
+} else {
+  QUESTIONS_ENDPOINT = "https://nameless-eyrie-29012.herokuapp.com/questions"
+}
+
+const API_HOST = process.env.REACT_APP_API_HOST;
+console.log("host", API_HOST)
+
 interface Props {
   question: string;
 }
@@ -8,53 +21,64 @@ interface Response {
   answer: string;
 }
 
-
-/*
-  TMP, these values should come from build system runtime via ENV.
-*/
-let API_URL: string 
-if (window.location.hostname === "localhost") {
-  API_URL = "http://localhost:3000/questions"
-} else {
-  API_URL = "https://nameless-eyrie-29012.herokuapp.com/questions"
-}
-
 const QuestionAnswer: React.FC<Props> = ({ question }) => {
   
-  const [answer, setAnswer] = useState<string>('');
-  const [questionText, setQuestionText] = useState<string>(question);
+  const [answer, setAnswer] = useState('');
+  const [questionText, setQuestionText] = useState(question);
+  const [loading, setLoading] = useState(false)
 
+  
+
+  useEffect(() => {
+    // Wake up the Heroku dyno
+    const response = fetch(`${QUESTIONS_ENDPOINT}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json'}
+    });
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const response = await fetch(`${API_URL}`, {
+    setLoading(true)
+    
+    const response = await fetch(`${QUESTIONS_ENDPOINT}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "question" : { "question": questionText} 
-      }),
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify( {"question" : { "question": questionText} }),
     });
-    const data: Response = await response.json();
-    setAnswer(data.answer);
+
+    const question: Response = await response.json();
+    setLoading(false)
+    setAnswer(question.answer);
   };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuestionText(event.target.value);
   };
 
+  const buttonText = () =>  {
+    return loading ? "..." : "Submit"
+  }
+
+  const buttonClasses = () => {
+    return loading? "submit disabled" : "submit"
+  }
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        
         <input 
           onChange={handleInputChange} 
           type="text" 
           value={questionText} 
           />
-        <button type="submit">Submit</button>
+        
+        <button type="submit" className={buttonClasses()} disabled={loading}>
+          { buttonText() }
+          { loading && <i className="fa fa-refresh fa-spin"></i> }  
+        </button>
+        
       </form>
 
       {answer && (

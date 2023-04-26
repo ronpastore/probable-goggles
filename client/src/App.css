@@ -1,3 +1,13 @@
 .App {
   text-align: center;
+  padding-top: 100px;
+}
+
+.disabled {
+  background-color: grey;
+}
+
+.submit{
+  padding-left: 10px;
+  transform: translate(5px, -2px);
 }
