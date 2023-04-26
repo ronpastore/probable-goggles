@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 
 interface Props {
   question: string;
@@ -24,6 +24,7 @@ const QuestionAnswer: React.FC<Props> = ({ question }) => {
   const [answer, setAnswer] = useState<string>('');
   const [questionText, setQuestionText] = useState<string>(question);
 
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -43,6 +44,7 @@ const QuestionAnswer: React.FC<Props> = ({ question }) => {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuestionText(event.target.value);
   };
+
 
   return (
     <div>
