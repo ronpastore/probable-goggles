@@ -1,17 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 
-/*
-  TODO, these values should come from build system runtime via ENV.
-*/
-let QUESTIONS_ENDPOINT: string 
-if (window.location.hostname === "localhost") {
-  QUESTIONS_ENDPOINT = "http://localhost:3000/questions"
-} else {
-  QUESTIONS_ENDPOINT = "https://nameless-eyrie-29012.herokuapp.com/questions"
-}
-
-const API_HOST = process.env.REACT_APP_API_HOST;
-console.log("host", API_HOST)
+const QUESTIONS_ENDPOINT =`${process.env.REACT_APP_API_HOST}/questions`
 
 interface Props {
   question: string;
@@ -26,9 +15,7 @@ const QuestionAnswer: React.FC<Props> = ({ question }) => {
   const [answer, setAnswer] = useState('');
   const [questionText, setQuestionText] = useState(question);
   const [loading, setLoading] = useState(false)
-
   
-
   useEffect(() => {
     // Wake up the Heroku dyno
     const response = fetch(`${QUESTIONS_ENDPOINT}`, {
